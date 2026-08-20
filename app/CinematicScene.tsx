@@ -281,7 +281,7 @@ export default function CinematicScene() {
     lid.add(bezel);
 
     const screenTexture = makeScreenTexture(renderer);
-    const screenMaterial = new THREE.MeshBasicMaterial({ map: screenTexture, color: 0xffffff, toneMapped: false });
+    const screenMaterial = new THREE.MeshBasicMaterial({ map: screenTexture, color: 0xffffff, toneMapped: false, transparent: true, opacity: 0.035 });
     const screen = new THREE.Mesh(new THREE.PlaneGeometry(5.78, 3.25), screenMaterial);
     screen.position.set(0, 1.91, 0.142);
     lid.add(screen);
@@ -318,7 +318,8 @@ export default function CinematicScene() {
     orb.castShadow = true;
     scene.add(orb);
 
-    const ribbonMaterial = new THREE.MeshBasicMaterial({ color: 0xc8ff19, transparent: true, opacity: 0.34, blending: THREE.AdditiveBlending, depthWrite: false });
+    const ribbonMaterial = new THREE.MeshBasicMaterial({ color: 0xc8ff19, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+    const ribbons: THREE.Mesh[] = [];
     for (let index = 0; index < 3; index += 1) {
       const ribbonPath = new THREE.CatmullRomCurve3([
         new THREE.Vector3(-5, -1.1 - index * 0.18, -1 + index * 0.2),
@@ -328,6 +329,7 @@ export default function CinematicScene() {
       ]);
       const ribbon = new THREE.Mesh(new THREE.TubeGeometry(ribbonPath, 96, 0.012 + index * 0.004, 6, false), ribbonMaterial.clone());
       scene.add(ribbon);
+      ribbons.push(ribbon);
     }
 
     const particlesGeometry = new THREE.BufferGeometry();
@@ -362,36 +364,54 @@ export default function CinematicScene() {
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(host);
 
-    const clockStart = performance.now() - (reduceMotion ? 6000 : 0);
+    // Let the short brand loader clear before the physical camera move begins.
+    const clockStart = performance.now() + (reduceMotion ? -7600 : 720);
     let frame = 0;
     let stopped = false;
+    let portalTriggered = false;
+    let revealTriggered = false;
     const render = (now: number) => {
       if (stopped) return;
       const time = (now - clockStart) / 1000;
       const isMobile = host.clientWidth < 760;
-      const entrance = easeOut(time / 1.15);
-      const opening = easeInOut((time - 0.7) / 2.15);
-      const settle = easeInOut((time - 2.45) / 1.7);
-      const reveal = easeOut((time - 2.2) / 1.7);
-      const floatTime = Math.max(0, time - 3.4);
+      const cameraPush = easeInOut((time - 0.72) / 1.86);
+      const portal = easeInOut((time - 2.34) / 0.72);
+      const reframe = easeInOut((time - 2.72) / 1.72);
+      const opening = easeInOut((time - 2.05) / 1.95);
+      const reveal = easeOut((time - 3.52) / 1.34);
+      const floatTime = Math.max(0, time - 4.45);
+
+      if (!portalTriggered && time > 2.32) {
+        portalTriggered = true;
+        host.classList.add("isPortal");
+      }
+      if (!revealTriggered && time > 4.2) {
+        revealTriggered = true;
+        host.classList.add("isRevealed");
+      }
 
       pointer.lerp(pointerTarget, 0.045);
       laptop.position.set(
-        THREE.MathUtils.lerp(0, isMobile ? 0 : 1.55, settle),
-        THREE.MathUtils.lerp(-3.1, isMobile ? -1.52 : -0.78, entrance),
-        THREE.MathUtils.lerp(0.3, 0, settle),
+        THREE.MathUtils.lerp(0, isMobile ? 0 : 1.92, reframe),
+        THREE.MathUtils.lerp(isMobile ? -0.95 : -0.62, isMobile ? -1.55 : -0.86, reframe),
+        THREE.MathUtils.lerp(0.05, 0, reframe),
       );
-      const laptopScale = THREE.MathUtils.lerp(isMobile ? 0.42 : 0.62, isMobile ? 0.49 : 0.7, entrance);
+      const laptopScale = THREE.MathUtils.lerp(isMobile ? 0.76 : 1.05, isMobile ? 0.48 : 0.62, reframe);
       laptop.scale.setScalar(laptopScale);
-      laptop.rotation.y = THREE.MathUtils.lerp(0, -0.09, settle) + pointer.x * 0.035;
-      laptop.rotation.x = pointer.y * -0.018;
-      lid.rotation.x = THREE.MathUtils.lerp(1.47, -0.14, opening);
-      screenGlow.material.opacity = clamp((time - 1.2) / 1.2) * 0.08;
+      laptop.rotation.y = THREE.MathUtils.lerp(0.18, -0.09, reframe) + pointer.x * 0.028 * reframe;
+      laptop.rotation.x = THREE.MathUtils.lerp(-0.05, 0, reframe) + pointer.y * -0.014 * reframe;
+      lid.rotation.x = THREE.MathUtils.lerp(0.84, -0.14, opening);
+      const power = easeOut((time - 2.24) / 0.9);
+      screenMaterial.opacity = 0.035 + power * 0.965;
+      screenGlow.material.opacity = Math.sin(portal * Math.PI) * 0.82 + power * 0.075;
+      limeLight.intensity = 12 + Math.sin(portal * Math.PI) * 115 + power * 26;
+      purpleLight.intensity = 3 + reveal * 22;
+      floor.material.opacity = 0.22 + reframe * 0.64;
 
       const desktopTargets = [
-        new THREE.Vector3(0.35, 2.45, 0.55),
-        new THREE.Vector3(3.55, 2.05, 0.15),
-        new THREE.Vector3(2.0, 0.62, 1.28),
+        new THREE.Vector3(1.3, 2.65, 0.58),
+        new THREE.Vector3(4.0, 2.08, 0.12),
+        new THREE.Vector3(2.65, 0.72, 1.32),
       ];
       const mobileTargets = [
         new THREE.Vector3(-1.25, -0.12, 1.1),
@@ -399,9 +419,9 @@ export default function CinematicScene() {
         new THREE.Vector3(0, -1.38, 1.5),
       ];
       const targets = isMobile ? mobileTargets : desktopTargets;
-      const origin = new THREE.Vector3(isMobile ? 0 : 1.55, isMobile ? -0.15 : 0.35, 0.05);
+      const origin = new THREE.Vector3(isMobile ? 0 : 1.9, isMobile ? -0.18 : 0.32, 0.05);
       cubes.forEach((cube, index) => {
-        const delayedReveal = easeOut((time - 2.2 - index * 0.18) / 1.45);
+        const delayedReveal = easeOut((time - 3.5 - index * 0.16) / 1.28);
         cube.position.lerpVectors(origin, targets[index], delayedReveal);
         const scale = delayedReveal * (isMobile ? 0.7 : index === 1 ? 0.9 : 1.02);
         cube.scale.setScalar(scale);
@@ -411,14 +431,27 @@ export default function CinematicScene() {
         cube.position.y += Math.sin(floatTime * 0.75 + index * 1.8) * 0.08 * reveal;
       });
 
-      const orbTarget = isMobile ? new THREE.Vector3(1.18, -1.34, 1.55) : new THREE.Vector3(3.62, 0.28, 1.52);
+      const orbTarget = isMobile ? new THREE.Vector3(1.18, -1.34, 1.55) : new THREE.Vector3(4.02, 0.28, 1.52);
       orb.position.lerpVectors(origin, orbTarget, reveal);
       orb.position.y += Math.sin(floatTime * 0.9) * 0.08 * reveal;
       orb.scale.setScalar(reveal * (isMobile ? 0.62 : 1));
 
-      camera.position.x = pointer.x * 0.22;
-      camera.position.y = 1.7 - pointer.y * 0.12;
-      camera.lookAt(isMobile ? 0 : 0.5, isMobile ? -0.1 : 0.35, 0);
+      const cameraStart = isMobile ? new THREE.Vector3(4.2, 0.28, 3.45) : new THREE.Vector3(5.7, 0.42, 4.35);
+      const cameraTunnel = isMobile ? new THREE.Vector3(0.7, -0.08, 0.9) : new THREE.Vector3(0.92, 0.02, 1.02);
+      const cameraFinal = new THREE.Vector3(pointer.x * 0.2 * reframe, 1.7 - pointer.y * 0.1 * reframe, isMobile ? 9.15 : 9.5);
+      const introCamera = cameraStart.clone().lerp(cameraTunnel, cameraPush);
+      camera.position.copy(introCamera.lerp(cameraFinal, reframe));
+      const introLook = new THREE.Vector3(0, -0.34, -0.96);
+      const tunnelLook = new THREE.Vector3(-0.08, -0.12, -1.24);
+      const finalLook = new THREE.Vector3(isMobile ? 0 : 0.72, isMobile ? -0.12 : 0.34, 0);
+      const currentLook = introLook.lerp(tunnelLook, cameraPush).lerp(finalLook, reframe);
+      camera.lookAt(currentLook);
+      camera.fov = THREE.MathUtils.lerp(isMobile ? 43 : 34, isMobile ? 52 : 39, reframe);
+      camera.updateProjectionMatrix();
+      ribbons.forEach((ribbon, index) => {
+        (ribbon.material as THREE.MeshBasicMaterial).opacity = reveal * (0.3 - index * 0.055);
+      });
+      (particles.material as THREE.PointsMaterial).opacity = 0.035 + reveal * 0.46;
       particles.rotation.y = time * 0.018;
       renderer.render(scene, camera);
       frame = window.requestAnimationFrame(render);
@@ -452,6 +485,8 @@ export default function CinematicScene() {
   return (
     <div className="cinematicScene" ref={hostRef} aria-hidden="true">
       <div className="cinematicVignette" />
+      <div className="cinematicPortalFlash" />
+      <div className="cinematicIntroLabel"><i /> REVEACE / OPENING SEQUENCE</div>
       <div className="cinematicBadge"><i /> REALTIME PHYSICAL GLASS</div>
     </div>
   );

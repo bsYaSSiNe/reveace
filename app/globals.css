@@ -129,22 +129,30 @@ img { display: block; max-width: 100%; }
 .cinematicScene { position: absolute; inset: 0; z-index: 2; overflow: hidden; opacity: 0; transition: opacity .7s .28s ease; }
 .isReady .cinematicScene { opacity: 1; }
 .cinematicCanvas { width: 100%; height: 100%; display: block; filter: saturate(1.08) contrast(1.035); }
-.cinematicVignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 69% 52%, transparent 18%, rgba(3,4,4,.05) 42%, rgba(3,4,4,.92) 97%), linear-gradient(90deg, rgba(3,4,4,.9) 0%, rgba(3,4,4,.33) 38%, transparent 64%); }
+.cinematicVignette { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse at 69% 52%, transparent 18%, rgba(3,4,4,.05) 42%, rgba(3,4,4,.92) 97%), linear-gradient(90deg, rgba(3,4,4,.9) 0%, rgba(3,4,4,.33) 38%, transparent 64%); transition: background 1.2s ease; }
+.cinematicScene:not(.isRevealed) .cinematicVignette { background: radial-gradient(ellipse at 54% 46%, transparent 9%, rgba(1,2,2,.18) 35%, rgba(1,2,2,.78) 72%, #010202 100%), linear-gradient(90deg, rgba(1,2,2,.65), transparent 42%, rgba(1,2,2,.42)); }
 .cinematicVignette::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 3%; height: 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(200,255,25,.12), transparent 68%); filter: blur(30px); opacity: .6; }
-.cinematicBadge { position: absolute; z-index: 3; right: 32px; bottom: 34px; display: flex; align-items: center; gap: 9px; color: rgba(255,255,255,.46); font-size: 7px; letter-spacing: .2em; opacity: 0; transform: translateY(8px); transition: opacity .7s 4s, transform .7s 4s; }
-.isReady .cinematicBadge { opacity: 1; transform: none; }
+.cinematicPortalFlash { position: absolute; inset: -12%; z-index: 4; pointer-events: none; opacity: 0; transform: scale(.68); background: radial-gradient(circle at 51% 47%, rgba(232,255,181,.98) 0 2%, rgba(200,255,25,.92) 5%, rgba(171,255,0,.28) 17%, transparent 42%); mix-blend-mode: screen; filter: blur(8px); }
+.cinematicScene.isPortal .cinematicPortalFlash { animation: cinematicPortalFlash 1.22s cubic-bezier(.16,1,.3,1) both; }
+.cinematicIntroLabel { position: absolute; z-index: 5; left: 50%; bottom: 48px; display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.42); font-size: 7px; letter-spacing: .23em; transform: translateX(-50%); transition: opacity .45s ease, transform .65s cubic-bezier(.16,1,.3,1); }
+.cinematicIntroLabel i { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 15px var(--lime); animation: pulse 1.7s ease-in-out infinite; }
+.cinematicScene.isPortal .cinematicIntroLabel { opacity: 0; transform: translateX(-50%) translateY(12px); }
+.cinematicBadge { position: absolute; z-index: 5; right: 32px; bottom: 34px; display: flex; align-items: center; gap: 9px; color: rgba(255,255,255,.46); font-size: 7px; letter-spacing: .2em; opacity: 0; transform: translateY(8px); transition: opacity .7s ease, transform .7s ease; }
+.cinematicScene.isRevealed .cinematicBadge { opacity: 1; transform: none; }
 .cinematicBadge i { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px var(--lime); animation: pulse 2.4s ease-in-out infinite; }
-.cinematicHero .heroCopy { width: 50%; padding-top: 42px; }
-.cinematicHero .heroKicker { transition-delay: 3.1s; }
-.cinematicHero h1 span { transition-delay: 2.85s; }
-.cinematicHero h2 span:nth-child(1) { transition-delay: 3.02s; }
-.cinematicHero h2 span:nth-child(2) { transition-delay: 3.14s; }
-.cinematicHero .heroCopy > p { transition-delay: 3.42s; }
-.cinematicHero .heroActions { transition-delay: 3.58s; }
-.cinematicHero .heroFoot { opacity: 0; transform: translateY(8px); transition: opacity .7s 4s, transform .7s 4s; }
+.cinematicHero .heroCopy { width: 44%; padding-top: 42px; }
+.cinematicHero h1 { font-size: clamp(70px, 7.2vw, 112px); }
+.cinematicHero h2 { font-size: clamp(42px, 4.45vw, 66px); }
+.cinematicHero .heroKicker { transition-delay: 4.65s; }
+.cinematicHero h1 span { transition-delay: 4.48s; }
+.cinematicHero h2 span:nth-child(1) { transition-delay: 4.66s; }
+.cinematicHero h2 span:nth-child(2) { transition-delay: 4.78s; }
+.cinematicHero .heroCopy > p { transition-delay: 5s; }
+.cinematicHero .heroActions { transition-delay: 5.15s; }
+.cinematicHero .heroFoot { opacity: 0; transform: translateY(8px); transition: opacity .7s 5.35s, transform .7s 5.35s; }
 .isReady .cinematicHero .heroFoot { opacity: 1; transform: none; }
 .topbar { opacity: 0; transform: translateY(-10px); }
-.isReady .topbar { opacity: 1; transform: none; transition: opacity .6s 3.25s, transform .6s 3.25s, background .35s, backdrop-filter .35s, border-color .35s; }
+.isReady .topbar { opacity: 1; transform: none; transition: opacity .6s 5s, transform .6s 5s, background .35s, backdrop-filter .35s, border-color .35s; }
 
 .signalRail { overflow: hidden; border-block: 1px solid rgba(200,255,25,.5); background: var(--lime); color: #080908; transform: rotate(-.6deg) scale(1.01); }
 .signalRail > div { width: max-content; display: flex; align-items: center; gap: 30px; padding: 11px 0; animation: rail 25s linear infinite; }
@@ -248,6 +256,12 @@ img { display: block; max-width: 100%; }
 
 @keyframes loadingLine { from { transform: translateX(-110%); } to { transform: translateX(185%); } }
 @keyframes pulse { 50% { opacity: .35; box-shadow: 0 0 4px var(--lime); } }
+@keyframes cinematicPortalFlash {
+  0% { opacity: 0; transform: scale(.68); }
+  28% { opacity: .92; }
+  48% { opacity: .36; }
+  100% { opacity: 0; transform: scale(1.34); }
+}
 @keyframes glassSweep { 0%, 62% { transform: translateX(-70%) rotate(25deg); } 88%, 100% { transform: translateX(190%) rotate(25deg); } }
 @keyframes floatCurve { 50% { transform: rotate(5deg) translate3d(4px,-15px,78px); } }
 @keyframes floatSliders { 50% { transform: rotate(20deg) translate3d(6px,-13px,118px); } }
@@ -263,7 +277,7 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 1100px) {
   .heroCopy { width: 62%; }
-  .cinematicHero .heroCopy { width: 56%; }
+  .cinematicHero .heroCopy { width: 48%; }
   .hero h1 { font-size: clamp(78px, 10vw, 112px); }
   .heroScene { right: -170px; transform: translate3d(var(--scene-x), var(--scene-y), 0) scale(.86) rotateX(var(--scene-rx)) rotateY(var(--scene-ry)); }
   .productGrid { grid-template-columns: 1fr; }
@@ -288,6 +302,8 @@ img { display: block; max-width: 100%; }
   .cinematicHero, .cinematicHero .heroInner { min-height: 980px; height: 980px; }
   .heroCopy { align-self: start; width: 100%; padding-top: 135px; }
   .cinematicHero .heroCopy { width: 100%; padding-top: 118px; }
+  .cinematicHero h1 { font-size: clamp(58px, 18vw, 84px); }
+  .cinematicHero h2 { font-size: clamp(39px, 12vw, 58px); }
   .heroKicker { font-size: 7px; margin-bottom: 22px; }
   .hero h1 { font-size: clamp(59px, 19.5vw, 90px); }
   .hero h2 { margin-top: 20px; font-size: clamp(42px, 13.6vw, 65px); }
@@ -300,6 +316,7 @@ img { display: block; max-width: 100%; }
   .heroFoot { display: none; }
   .cinematicVignette { background: linear-gradient(180deg, rgba(3,4,4,.25) 0%, rgba(3,4,4,.18) 42%, rgba(3,4,4,.8) 100%), radial-gradient(ellipse at center 72%, transparent 10%, rgba(3,4,4,.25) 60%); }
   .cinematicBadge { right: 17px; bottom: 19px; font-size: 6px; }
+  .cinematicIntroLabel { bottom: 31px; width: 100%; justify-content: center; font-size: 6px; }
   .products { padding: 120px 0 130px; }
   .sectionHead { align-items: flex-start; flex-direction: column; gap: 24px; }
   .sectionHead h2, .system h2 { font-size: 53px; }
