@@ -406,15 +406,16 @@ export default function CinematicScene() {
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(host);
 
-    // Let the short brand loader clear before the physical camera move begins.
-    const clockStart = performance.now() + (reduceMotion ? -7600 : 720);
+    // Start only after the site is ready and the brand loader has fully cleared.
+    let sequenceStart = reduceMotion ? performance.now() - 7600 : 0;
     let frame = 0;
     let stopped = false;
     let portalTriggered = false;
     let revealTriggered = false;
     const render = (now: number) => {
       if (stopped) return;
-      const time = (now - clockStart) / 1000;
+      if (!sequenceStart && host.closest(".site")?.classList.contains("isReady")) sequenceStart = now + 680;
+      const time = sequenceStart ? (now - sequenceStart) / 1000 : -1;
       const isMobile = host.clientWidth < 760;
       const applePull = easeInOut((time - 0.04) / 0.92);
       const portal = easeInOut((time - 1.3) / 0.64);
@@ -479,12 +480,12 @@ export default function CinematicScene() {
       });
 
       const cameraStart = isMobile ? new THREE.Vector3(4.5, 0.08, 1.18) : new THREE.Vector3(5.05, 0.02, 1.05);
-      const cameraV = isMobile ? new THREE.Vector3(11.1, 0.56, 1.92) : new THREE.Vector3(14.2, 0.72, 2.18);
+      const cameraV = isMobile ? new THREE.Vector3(12.4, 0.62, 2.02) : new THREE.Vector3(16.4, 0.82, 2.38);
       const cameraFinal = new THREE.Vector3(pointer.x * 0.2 * reframe, 1.7 - pointer.y * 0.1 * reframe, isMobile ? 9.15 : 9.5);
       const introCamera = cameraStart.clone().lerp(cameraV, applePull);
       camera.position.copy(introCamera.lerp(cameraFinal, reframe));
       const introLook = new THREE.Vector3(0, -0.22, -0.52);
-      const vLook = new THREE.Vector3(0, -0.1, -0.24);
+      const vLook = new THREE.Vector3(0, -0.6, -0.2);
       const finalLook = new THREE.Vector3(isMobile ? 0 : 0.82, isMobile ? -0.12 : 0.3, 0);
       const currentLook = introLook.lerp(vLook, applePull).lerp(finalLook, reframe);
       camera.lookAt(currentLook);
