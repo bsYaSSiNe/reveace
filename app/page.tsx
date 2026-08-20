@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useState } from "react";
+import type { ComponentType, CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 
 type Product = {
   number: string;
@@ -74,21 +74,6 @@ function ToolGlyph({ type }: { type: Product["symbol"] }) {
   );
 }
 
-function LiquidCube({ className, symbol }: { className: string; symbol: Product["symbol"] }) {
-  return (
-    <div className={`cubeFloat ${className}`} aria-hidden="true">
-      <div className="liquidCube">
-        <div className="cubeBack" />
-        <div className="cubeCore">
-          <div className="cubeGloss" />
-          <ToolGlyph type={symbol} />
-        </div>
-        <div className="cubeRim" />
-      </div>
-    </div>
-  );
-}
-
 const setTilt = (event: ReactPointerEvent<HTMLElement>) => {
   const node = event.currentTarget;
   const rect = node.getBoundingClientRect();
@@ -110,7 +95,17 @@ export default function Home() {
   const [ready, setReady] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const heroRef = useRef<HTMLElement>(null);
+  const [SceneComponent, setSceneComponent] = useState<ComponentType | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    import("./CinematicScene").then((module) => {
+      if (active) setSceneComponent(() => module.default);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setReady(true), 520);
@@ -121,14 +116,8 @@ export default function Home() {
     document.querySelectorAll("[data-reveal]").forEach((element) => reveal.observe(element));
 
     const onPointer = (event: PointerEvent) => {
-      const x = event.clientX / window.innerWidth - 0.5;
-      const y = event.clientY / window.innerHeight - 0.5;
       document.documentElement.style.setProperty("--pointer-x", `${event.clientX}px`);
       document.documentElement.style.setProperty("--pointer-y", `${event.clientY}px`);
-      heroRef.current?.style.setProperty("--scene-x", `${x * 17}px`);
-      heroRef.current?.style.setProperty("--scene-y", `${y * 12}px`);
-      heroRef.current?.style.setProperty("--scene-rx", `${y * -2.6}deg`);
-      heroRef.current?.style.setProperty("--scene-ry", `${x * 3.4}deg`);
     };
     const onScroll = () => setScrolled(window.scrollY > 24);
     window.addEventListener("pointermove", onPointer, { passive: true });
@@ -173,14 +162,9 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="hero" id="top" ref={heroRef}>
+      <section className="hero cinematicHero" id="top">
         <div className="heroNoise" aria-hidden="true" />
-        <div className="heroAura" aria-hidden="true" />
-        <div className="lightRibbon ribbonOne" aria-hidden="true" />
-        <div className="lightRibbon ribbonTwo" aria-hidden="true" />
-        <div className="lightRibbon ribbonThree" aria-hidden="true" />
-        <div className="energyLine energyOne" aria-hidden="true"><i /><i /><i /><i /></div>
-        <div className="energyLine energyTwo" aria-hidden="true"><i /><i /><i /></div>
+        {SceneComponent ? <SceneComponent /> : <div className="cinematicScene cinematicFallback" aria-hidden="true" />}
 
         <div className="heroInner shell">
           <div className="heroCopy">
@@ -192,16 +176,6 @@ export default function Home() {
               <a className="primaryButton" href="#products">Explore the tools <span>↓</span></a>
               <a className="ghostButton" href="https://youtube.com/@reveace" target="_blank" rel="noreferrer">View on YouTube <span>↗</span></a>
             </div>
-          </div>
-
-          <div className="heroScene" aria-label="Interactive 3D glass motion tools">
-            <div className="sceneGlow sceneGlowLime" />
-            <div className="sceneGlow sceneGlowPurple" />
-            <LiquidCube className="cubeCurve" symbol="curve" />
-            <LiquidCube className="cubeSliders" symbol="sliders" />
-            <LiquidCube className="cubeWave" symbol="wave" />
-            <div className="liquidOrb" aria-hidden="true"><i /></div>
-            <div className="sceneTag"><i /> LIVE MOTION OBJECTS</div>
           </div>
 
           <div className="heroFoot">
