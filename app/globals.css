@@ -124,14 +124,14 @@ img { display: block; max-width: 100%; }
 .heroMetrics b { color: #e9e9e9; font-size: 13px; letter-spacing: -.03em; }
 
 /* cinematic product reveal */
-.cinematicHero { min-height: max(880px, 100svh); height: max(880px, 100svh); background: radial-gradient(ellipse at 68% 52%, rgba(170,255,0,.075), transparent 29%), radial-gradient(ellipse at 88% 60%, rgba(106,55,255,.055), transparent 25%), #030404; }
+.cinematicHero { min-height: max(880px, 100svh); height: max(880px, 100svh); background: radial-gradient(ellipse at 72% 48%, rgba(188,255,0,.09), transparent 26%), radial-gradient(ellipse at 91% 62%, rgba(93,60,255,.035), transparent 22%), #020303; }
 .cinematicHero .heroInner { height: 100%; min-height: 880px; }
 .cinematicScene { position: absolute; inset: 0; z-index: 2; overflow: hidden; opacity: 0; transition: opacity .7s .28s ease; }
 .isReady .cinematicScene { opacity: 1; }
-.cinematicCanvas { width: 100%; height: 100%; display: block; filter: saturate(1.08) contrast(1.035); }
+.cinematicCanvas { width: 100%; height: 100%; display: block; filter: saturate(1.22) contrast(1.13) brightness(.96); }
 .cinematicVignette { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse at 69% 52%, transparent 18%, rgba(3,4,4,.05) 42%, rgba(3,4,4,.92) 97%), linear-gradient(90deg, rgba(3,4,4,.9) 0%, rgba(3,4,4,.33) 38%, transparent 64%); transition: background 1.2s ease; }
 .cinematicScene:not(.isRevealed) .cinematicVignette { background: radial-gradient(ellipse at 54% 46%, transparent 9%, rgba(1,2,2,.18) 35%, rgba(1,2,2,.78) 72%, #010202 100%), linear-gradient(90deg, rgba(1,2,2,.65), transparent 42%, rgba(1,2,2,.42)); }
-.cinematicVignette::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 3%; height: 16%; border-radius: 50%; background: radial-gradient(ellipse, rgba(200,255,25,.12), transparent 68%); filter: blur(30px); opacity: .6; }
+.cinematicVignette::after { content: ""; position: absolute; left: 34%; right: 3%; bottom: 3%; height: 13%; border-radius: 50%; background: radial-gradient(ellipse, rgba(200,255,25,.11), transparent 68%); filter: blur(34px); opacity: .52; }
 .cinematicPortalFlash { position: absolute; inset: -12%; z-index: 4; pointer-events: none; opacity: 0; transform: scale(.68); background: radial-gradient(circle at 51% 47%, rgba(232,255,181,.98) 0 2%, rgba(200,255,25,.92) 5%, rgba(171,255,0,.28) 17%, transparent 42%); mix-blend-mode: screen; filter: blur(8px); }
 .cinematicScene.isPortal .cinematicPortalFlash { animation: cinematicPortalFlash 1.22s cubic-bezier(.16,1,.3,1) both; }
 .cinematicIntroLabel { position: absolute; z-index: 5; left: 50%; bottom: 48px; display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.42); font-size: 7px; letter-spacing: .23em; transform: translateX(-50%); transition: opacity .45s ease, transform .65s cubic-bezier(.16,1,.3,1); }

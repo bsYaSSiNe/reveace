@@ -16,54 +16,54 @@ const neonMaterial = (color: number) =>
   new THREE.MeshStandardMaterial({
     color,
     emissive: color,
-    emissiveIntensity: 4.2,
-    roughness: 0.22,
-    metalness: 0.08,
+    emissiveIntensity: 6.4,
+    roughness: 0.16,
+    metalness: 0.02,
     toneMapped: false,
   });
 
 function addCurveGlyph(parent: THREE.Group) {
   const material = neonMaterial(0xc8ff19);
   const path = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-0.47, -0.35, 0.58),
-    new THREE.Vector3(-0.22, -0.3, 0.61),
-    new THREE.Vector3(0.04, 0.03, 0.62),
-    new THREE.Vector3(0.23, 0.32, 0.61),
-    new THREE.Vector3(0.48, 0.37, 0.58),
+    new THREE.Vector3(-0.42, -0.28, 0.315),
+    new THREE.Vector3(-0.2, -0.25, 0.325),
+    new THREE.Vector3(0.02, 0.015, 0.33),
+    new THREE.Vector3(0.2, 0.27, 0.325),
+    new THREE.Vector3(0.42, 0.3, 0.315),
   ]);
-  const tube = new THREE.Mesh(new THREE.TubeGeometry(path, 42, 0.024, 8, false), material);
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(path, 42, 0.021, 8, false), material);
   parent.add(tube);
 
   [-0.47, 0, 0.48].forEach((x, index) => {
     const dot = new THREE.Mesh(new THREE.SphereGeometry(index === 1 ? 0.045 : 0.055, 18, 18), material);
-    dot.position.set(x, index === 0 ? -0.35 : index === 1 ? 0.08 : 0.37, 0.61);
+    dot.position.set(x * 0.89, index === 0 ? -0.28 : index === 1 ? 0.045 : 0.3, 0.325);
     parent.add(dot);
   });
 }
 
 function addSliderGlyph(parent: THREE.Group) {
   const material = neonMaterial(0xc8ff19);
-  const darkMaterial = new THREE.MeshStandardMaterial({ color: 0x66710d, roughness: 0.3, metalness: 0.22 });
-  const widths = [0.88, 0.68, 0.92, 0.58];
-  const knobs = [0.24, -0.17, 0.31, 0.05];
+  const railMaterial = new THREE.MeshStandardMaterial({ color: 0x718214, emissive: 0x344100, emissiveIntensity: 1.4, roughness: 0.24, metalness: 0.04 });
+  const widths = [0.78, 0.7, 0.82, 0.62];
+  const knobs = [0.22, -0.18, 0.28, 0.03];
 
   widths.forEach((width, index) => {
     const y = 0.34 - index * 0.23;
-    const rail = new THREE.Mesh(new RoundedBoxGeometry(width, 0.07, 0.055, 4, 0.028), index === 1 ? darkMaterial : material);
-    rail.position.set(-0.08 + (width - 0.75) * 0.12, y, 0.61);
+    const rail = new THREE.Mesh(new RoundedBoxGeometry(width, 0.048, 0.035, 4, 0.022), railMaterial);
+    rail.position.set(-0.04 + (width - 0.72) * 0.08, y, 0.305);
     parent.add(rail);
     const knob = new THREE.Mesh(new THREE.SphereGeometry(0.055, 16, 16), material);
-    knob.position.set(knobs[index], y, 0.66);
+    knob.position.set(knobs[index], y, 0.33);
     parent.add(knob);
   });
 }
 
 function addWaveGlyph(parent: THREE.Group) {
   const material = neonMaterial(0xc8ff19);
-  const heights = [0.22, 0.48, 0.76, 1, 0.72, 0.43, 0.2];
+  const heights = [0.2, 0.42, 0.68, 0.9, 0.68, 0.42, 0.2];
   heights.forEach((height, index) => {
-    const bar = new THREE.Mesh(new RoundedBoxGeometry(0.065, height * 0.72, 0.055, 4, 0.028), material);
-    bar.position.set((index - 3) * 0.14, 0, 0.62);
+    const bar = new THREE.Mesh(new RoundedBoxGeometry(0.052, height * 0.72, 0.035, 4, 0.024), material);
+    bar.position.set((index - 3) * 0.125, 0, 0.32);
     parent.add(bar);
   });
 }
@@ -71,46 +71,51 @@ function addWaveGlyph(parent: THREE.Group) {
 function makeGlassObject(kind: "curve" | "sliders" | "wave", accent: number) {
   const group = new THREE.Group();
   const glass = new THREE.MeshPhysicalMaterial({
-    color: accent,
+    color: 0x1d2710,
     transmission: 1,
-    thickness: 1.35,
-    ior: 1.47,
-    roughness: 0.055,
+    thickness: 0.9,
+    ior: 1.42,
+    roughness: 0.035,
     metalness: 0,
     clearcoat: 1,
-    clearcoatRoughness: 0.04,
+    clearcoatRoughness: 0.025,
     attenuationColor: new THREE.Color(accent),
-    attenuationDistance: 2.15,
+    attenuationDistance: 1.35,
     specularIntensity: 1,
     specularColor: new THREE.Color(0xf5ffe1),
     transparent: true,
-    opacity: 0.94,
+    opacity: 0.82,
   });
-  const geometry = new RoundedBoxGeometry(1.25, 1.25, 0.55, 10, 0.23);
+  const geometry = new RoundedBoxGeometry(1.2, 1.2, 0.48, 12, 0.22);
   const body = new THREE.Mesh(geometry, glass);
   body.castShadow = true;
   group.add(body);
 
   const inner = new THREE.Mesh(
-    new RoundedBoxGeometry(1.05, 1.05, 0.44, 8, 0.18),
+    new RoundedBoxGeometry(0.99, 0.99, 0.18, 10, 0.16),
     new THREE.MeshPhysicalMaterial({
-      color: 0x0d1207,
-      transmission: 0.78,
-      thickness: 0.62,
-      roughness: 0.11,
+      color: 0x080b07,
+      transmission: 0.38,
+      thickness: 0.22,
+      roughness: 0.16,
       clearcoat: 1,
-      opacity: 0.66,
+      opacity: 0.76,
       transparent: true,
     }),
   );
+  inner.position.z = 0.08;
   group.add(inner);
 
   const edges = new THREE.LineSegments(
     new THREE.EdgesGeometry(geometry, 18),
-    new THREE.LineBasicMaterial({ color: 0xe7ffad, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending }),
+    new THREE.LineBasicMaterial({ color: 0xeaffb4, transparent: true, opacity: 0.72, blending: THREE.AdditiveBlending }),
   );
   edges.scale.setScalar(1.006);
   group.add(edges);
+
+  const statusDot = new THREE.Mesh(new THREE.SphereGeometry(0.018, 12, 12), neonMaterial(accent));
+  statusDot.position.set(-0.43, 0.43, 0.32);
+  group.add(statusDot);
 
   if (kind === "curve") addCurveGlyph(group);
   if (kind === "sliders") addSliderGlyph(group);
@@ -187,14 +192,14 @@ export default function CinematicScene() {
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.18;
+    renderer.toneMappingExposure = 1.08;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.className = "cinematicCanvas";
     host.prepend(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x030404, 0.045);
+    scene.fog = new THREE.FogExp2(0x020303, 0.032);
     const camera = new THREE.PerspectiveCamera(39, 1, 0.1, 80);
     camera.position.set(0, 1.7, 9.5);
 
@@ -203,22 +208,25 @@ export default function CinematicScene() {
     const environment = pmrem.fromScene(room, 0.035).texture;
     scene.environment = environment;
 
-    scene.add(new THREE.HemisphereLight(0xd8ff99, 0x09030f, 1.3));
-    const key = new THREE.DirectionalLight(0xf4ffe0, 4.2);
-    key.position.set(-4, 7, 6);
+    scene.add(new THREE.HemisphereLight(0xf1f5e9, 0x010202, 0.68));
+    const key = new THREE.DirectionalLight(0xffffff, 4.6);
+    key.position.set(-4.5, 7.5, 5.2);
     key.castShadow = true;
     key.shadow.mapSize.set(1024, 1024);
     scene.add(key);
-    const limeLight = new THREE.PointLight(0xc8ff19, 38, 12, 1.7);
+    const rim = new THREE.DirectionalLight(0xaec7ff, 3.4);
+    rim.position.set(7, 3.5, -4);
+    scene.add(rim);
+    const limeLight = new THREE.PointLight(0xbfff00, 38, 12, 1.7);
     limeLight.position.set(2.7, 2.2, 2.5);
     scene.add(limeLight);
-    const purpleLight = new THREE.PointLight(0x7c46ff, 25, 9, 1.8);
-    purpleLight.position.set(4.2, 0.2, 3.2);
+    const purpleLight = new THREE.PointLight(0x704cff, 14, 8, 1.8);
+    purpleLight.position.set(5.1, 0.1, 2.2);
     scene.add(purpleLight);
 
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(32, 22),
-      new THREE.MeshPhysicalMaterial({ color: 0x060707, roughness: 0.24, metalness: 0.58, clearcoat: 0.7, transparent: true, opacity: 0.86 }),
+      new THREE.MeshPhysicalMaterial({ color: 0x020303, roughness: 0.48, metalness: 0.58, clearcoat: 0.32, clearcoatRoughness: 0.24, transparent: true, opacity: 0.42 }),
     );
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -1.43;
@@ -227,24 +235,28 @@ export default function CinematicScene() {
 
     const laptop = new THREE.Group();
     scene.add(laptop);
-    const metal = new THREE.MeshPhysicalMaterial({ color: 0x393b3e, metalness: 0.92, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.12 });
-    const edgeMetal = new THREE.MeshPhysicalMaterial({ color: 0x777b7d, metalness: 1, roughness: 0.13, clearcoat: 1 });
-    const black = new THREE.MeshStandardMaterial({ color: 0x070809, metalness: 0.38, roughness: 0.45 });
+    const metal = new THREE.MeshPhysicalMaterial({ color: 0x50545a, metalness: 1, roughness: 0.2, clearcoat: 0.34, clearcoatRoughness: 0.13 });
+    const edgeMetal = new THREE.MeshPhysicalMaterial({ color: 0x969ba2, metalness: 1, roughness: 0.13, clearcoat: 0.46, clearcoatRoughness: 0.09 });
+    const darkMetal = new THREE.MeshPhysicalMaterial({ color: 0x24272a, metalness: 0.92, roughness: 0.25, clearcoat: 0.28 });
+    const black = new THREE.MeshStandardMaterial({ color: 0x030405, metalness: 0.32, roughness: 0.32 });
 
-    const base = new THREE.Mesh(new RoundedBoxGeometry(6.4, 0.2, 4.05, 8, 0.13), metal);
+    const base = new THREE.Mesh(new RoundedBoxGeometry(6.4, 0.23, 4.05, 10, 0.13), metal);
     base.position.y = -0.55;
     base.castShadow = true;
     base.receiveShadow = true;
     laptop.add(base);
-    const baseEdge = new THREE.Mesh(new RoundedBoxGeometry(6.23, 0.045, 3.9, 8, 0.11), edgeMetal);
-    baseEdge.position.y = -0.435;
+    const baseEdge = new THREE.Mesh(new RoundedBoxGeometry(6.27, 0.04, 3.93, 10, 0.11), edgeMetal);
+    baseEdge.position.y = -0.414;
     laptop.add(baseEdge);
+    const underside = new THREE.Mesh(new RoundedBoxGeometry(6.18, 0.08, 3.86, 8, 0.11), darkMetal);
+    underside.position.y = -0.65;
+    laptop.add(underside);
 
     const keyboardBed = new THREE.Mesh(new RoundedBoxGeometry(5.35, 0.045, 2.02, 6, 0.1), black);
     keyboardBed.position.set(0, -0.398, -0.62);
     laptop.add(keyboardBed);
     const keyGeometry = new RoundedBoxGeometry(0.34, 0.035, 0.23, 3, 0.035);
-    const keyMaterial = new THREE.MeshStandardMaterial({ color: 0x0c0d0e, roughness: 0.32, metalness: 0.3 });
+    const keyMaterial = new THREE.MeshPhysicalMaterial({ color: 0x050607, roughness: 0.2, metalness: 0.42, clearcoat: 0.5, clearcoatRoughness: 0.18 });
     const keys = new THREE.InstancedMesh(keyGeometry, keyMaterial, 65);
     const keyMatrix = new THREE.Matrix4();
     let keyIndex = 0;
@@ -257,9 +269,45 @@ export default function CinematicScene() {
     }
     laptop.add(keys);
 
-    const trackpad = new THREE.Mesh(new RoundedBoxGeometry(2.55, 0.025, 1.15, 6, 0.1), new THREE.MeshPhysicalMaterial({ color: 0x424548, metalness: 0.76, roughness: 0.25, clearcoat: 1 }));
+    const trackpadGeometry = new RoundedBoxGeometry(2.55, 0.022, 1.15, 8, 0.1);
+    const trackpad = new THREE.Mesh(trackpadGeometry, new THREE.MeshPhysicalMaterial({ color: 0x62666b, metalness: 0.96, roughness: 0.2, clearcoat: 0.42 }));
     trackpad.position.set(0, -0.39, 1.15);
     laptop.add(trackpad);
+    const trackpadEdge = new THREE.LineSegments(new THREE.EdgesGeometry(trackpadGeometry, 22), new THREE.LineBasicMaterial({ color: 0xc8cdd2, transparent: true, opacity: 0.34 }));
+    trackpadEdge.position.copy(trackpad.position);
+    laptop.add(trackpadEdge);
+
+    const speakerGeometry = new THREE.CircleGeometry(0.018, 8);
+    const speakerMaterial = new THREE.MeshBasicMaterial({ color: 0x050607, side: THREE.DoubleSide });
+    const speakers = new THREE.InstancedMesh(speakerGeometry, speakerMaterial, 72);
+    const speakerMatrix = new THREE.Matrix4();
+    const speakerQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
+    const speakerScale = new THREE.Vector3(1, 1, 1);
+    let speakerIndex = 0;
+    [-2.72, 2.72].forEach((x) => {
+      for (let row = 0; row < 6; row += 1) {
+        for (let column = 0; column < 6; column += 1) {
+          speakerMatrix.compose(new THREE.Vector3(x + (column - 2.5) * 0.065, -0.352, -1.22 + row * 0.17), speakerQuaternion, speakerScale);
+          speakers.setMatrixAt(speakerIndex, speakerMatrix);
+          speakerIndex += 1;
+        }
+      }
+    });
+    laptop.add(speakers);
+
+    const portMaterial = new THREE.MeshBasicMaterial({ color: 0x020303 });
+    const addPort = (x: number, z: number, width: number) => {
+      const port = new THREE.Mesh(new RoundedBoxGeometry(0.025, 0.055, width, 4, 0.018), portMaterial);
+      port.position.set(x, -0.535, z);
+      laptop.add(port);
+    };
+    addPort(-3.202, -0.68, 0.36);
+    addPort(-3.202, -0.14, 0.24);
+    addPort(3.202, -0.76, 0.28);
+
+    const openingNotch = new THREE.Mesh(new RoundedBoxGeometry(0.82, 0.018, 0.05, 5, 0.018), darkMetal);
+    openingNotch.position.set(0, -0.425, 2.015);
+    laptop.add(openingNotch);
 
     const hingeMaterial = new THREE.MeshStandardMaterial({ color: 0x161719, metalness: 0.9, roughness: 0.18 });
     [-2.35, 2.35].forEach((x) => {
@@ -272,11 +320,14 @@ export default function CinematicScene() {
     const lid = new THREE.Group();
     lid.position.set(0, -0.44, -1.92);
     laptop.add(lid);
-    const lidShell = new THREE.Mesh(new RoundedBoxGeometry(6.34, 3.82, 0.16, 8, 0.17), metal);
+    const lidShell = new THREE.Mesh(new RoundedBoxGeometry(6.34, 3.82, 0.18, 10, 0.17), metal);
     lidShell.position.y = 1.91;
     lidShell.castShadow = true;
     lid.add(lidShell);
-    const bezel = new THREE.Mesh(new RoundedBoxGeometry(6.07, 3.55, 0.06, 8, 0.13), black);
+    const lidInset = new THREE.Mesh(new RoundedBoxGeometry(6.17, 3.65, 0.055, 10, 0.14), darkMetal);
+    lidInset.position.set(0, 1.91, 0.105);
+    lid.add(lidInset);
+    const bezel = new THREE.Mesh(new RoundedBoxGeometry(6.04, 3.51, 0.055, 10, 0.12), black);
     bezel.position.set(0, 1.91, 0.105);
     lid.add(bezel);
 
@@ -288,46 +339,32 @@ export default function CinematicScene() {
     const screenGlow = new THREE.Mesh(new THREE.PlaneGeometry(6.05, 3.5), new THREE.MeshBasicMaterial({ color: 0xbaff12, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
     screenGlow.position.set(0, 1.91, 0.15);
     lid.add(screenGlow);
+    const screenGlass = new THREE.Mesh(new THREE.PlaneGeometry(5.8, 3.27), new THREE.MeshBasicMaterial({ color: 0xbfff8a, transparent: true, opacity: 0.035, blending: THREE.AdditiveBlending, depthWrite: false }));
+    screenGlass.position.set(0, 1.91, 0.154);
+    lid.add(screenGlass);
     const cameraDot = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 12), new THREE.MeshBasicMaterial({ color: 0x151718 }));
     cameraDot.position.set(0, 3.69, 0.152);
     lid.add(cameraDot);
 
     const cubeKinds = ["curve", "sliders", "wave"] as const;
+    const cubeAccents = [0xc8ff19, 0xb7f50f, 0xddff71];
     const cubes = cubeKinds.map((kind, index) => {
-      const group = makeGlassObject(kind, index === 2 ? 0x8e5cff : 0xc8ff19);
+      const group = makeGlassObject(kind, cubeAccents[index]);
       group.scale.setScalar(0.001);
       scene.add(group);
       return group;
     });
 
-    const orb = new THREE.Mesh(
-      new THREE.SphereGeometry(0.44, 64, 64),
-      new THREE.MeshPhysicalMaterial({
-        color: 0x7440ff,
-        transmission: 1,
-        thickness: 1.1,
-        ior: 1.52,
-        roughness: 0.035,
-        clearcoat: 1,
-        clearcoatRoughness: 0.02,
-        attenuationColor: new THREE.Color(0x9e72ff),
-        attenuationDistance: 1.2,
-      }),
-    );
-    orb.scale.setScalar(0.001);
-    orb.castShadow = true;
-    scene.add(orb);
-
     const ribbonMaterial = new THREE.MeshBasicMaterial({ color: 0xc8ff19, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
     const ribbons: THREE.Mesh[] = [];
     for (let index = 0; index < 3; index += 1) {
       const ribbonPath = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-5, -1.1 - index * 0.18, -1 + index * 0.2),
-        new THREE.Vector3(-1, -1.2 + index * 0.12, 0.3),
-        new THREE.Vector3(2.1, -0.65 + index * 0.16, 0.8),
-        new THREE.Vector3(6.2, 0.35 + index * 0.4, -0.4),
+        new THREE.Vector3(0.15, -1.14 - index * 0.09, -0.9 + index * 0.14),
+        new THREE.Vector3(2.15, -1.02 + index * 0.08, 0.15),
+        new THREE.Vector3(3.85, -0.58 + index * 0.11, 0.48),
+        new THREE.Vector3(6.25, 0.18 + index * 0.28, -0.35),
       ]);
-      const ribbon = new THREE.Mesh(new THREE.TubeGeometry(ribbonPath, 96, 0.012 + index * 0.004, 6, false), ribbonMaterial.clone());
+      const ribbon = new THREE.Mesh(new THREE.TubeGeometry(ribbonPath, 96, 0.009 + index * 0.003, 6, false), ribbonMaterial.clone());
       scene.add(ribbon);
       ribbons.push(ribbon);
     }
@@ -336,7 +373,7 @@ export default function CinematicScene() {
     const particlePositions = new Float32Array(210 * 3);
     for (let index = 0; index < 210; index += 1) {
       const seed = index * 9.73;
-      particlePositions[index * 3] = Math.sin(seed * 1.7) * 6.5;
+      particlePositions[index * 3] = 0.4 + Math.abs(Math.sin(seed * 1.7)) * 5.7;
       particlePositions[index * 3 + 1] = -1.1 + Math.abs(Math.cos(seed * 0.63)) * 3.8;
       particlePositions[index * 3 + 2] = -2 + Math.sin(seed * 0.91) * 3.2;
     }
@@ -392,11 +429,11 @@ export default function CinematicScene() {
 
       pointer.lerp(pointerTarget, 0.045);
       laptop.position.set(
-        THREE.MathUtils.lerp(0, isMobile ? 0 : 1.92, reframe),
+        THREE.MathUtils.lerp(0, isMobile ? 0 : 1.68, reframe),
         THREE.MathUtils.lerp(isMobile ? -0.95 : -0.62, isMobile ? -1.55 : -0.86, reframe),
         THREE.MathUtils.lerp(0.05, 0, reframe),
       );
-      const laptopScale = THREE.MathUtils.lerp(isMobile ? 0.76 : 1.05, isMobile ? 0.48 : 0.62, reframe);
+      const laptopScale = THREE.MathUtils.lerp(isMobile ? 0.76 : 1.05, isMobile ? 0.48 : 0.66, reframe);
       laptop.scale.setScalar(laptopScale);
       laptop.rotation.y = THREE.MathUtils.lerp(0.18, -0.09, reframe) + pointer.x * 0.028 * reframe;
       laptop.rotation.x = THREE.MathUtils.lerp(-0.05, 0, reframe) + pointer.y * -0.014 * reframe;
@@ -405,13 +442,13 @@ export default function CinematicScene() {
       screenMaterial.opacity = 0.035 + power * 0.965;
       screenGlow.material.opacity = Math.sin(portal * Math.PI) * 0.82 + power * 0.075;
       limeLight.intensity = 12 + Math.sin(portal * Math.PI) * 115 + power * 26;
-      purpleLight.intensity = 3 + reveal * 22;
-      floor.material.opacity = 0.22 + reframe * 0.64;
+      purpleLight.intensity = 2 + reveal * 9;
+      floor.material.opacity = 0.08 + reframe * 0.2;
 
       const desktopTargets = [
-        new THREE.Vector3(1.3, 2.65, 0.58),
-        new THREE.Vector3(4.0, 2.08, 0.12),
-        new THREE.Vector3(2.65, 0.72, 1.32),
+        new THREE.Vector3(4.12, 2.56, 0.24),
+        new THREE.Vector3(4.12, 1.28, 0.56),
+        new THREE.Vector3(4.12, -0.02, 0.92),
       ];
       const mobileTargets = [
         new THREE.Vector3(-1.25, -0.12, 1.1),
@@ -419,22 +456,17 @@ export default function CinematicScene() {
         new THREE.Vector3(0, -1.38, 1.5),
       ];
       const targets = isMobile ? mobileTargets : desktopTargets;
-      const origin = new THREE.Vector3(isMobile ? 0 : 1.9, isMobile ? -0.18 : 0.32, 0.05);
+      const origin = new THREE.Vector3(isMobile ? 0 : 2.05, isMobile ? -0.18 : 0.52, 0.05);
       cubes.forEach((cube, index) => {
         const delayedReveal = easeOut((time - 3.5 - index * 0.16) / 1.28);
         cube.position.lerpVectors(origin, targets[index], delayedReveal);
-        const scale = delayedReveal * (isMobile ? 0.7 : index === 1 ? 0.9 : 1.02);
+        const scale = delayedReveal * (isMobile ? 0.64 : 0.78);
         cube.scale.setScalar(scale);
-        cube.rotation.x = 0.16 + index * 0.18 + Math.sin(floatTime * 0.55 + index) * 0.07 + pointer.y * 0.11;
-        cube.rotation.y = -0.3 + index * 0.42 + Math.sin(floatTime * 0.42 + index * 1.7) * 0.1 + pointer.x * 0.16;
-        cube.rotation.z = (index - 1) * 0.14 + Math.sin(floatTime * 0.7 + index) * 0.05;
-        cube.position.y += Math.sin(floatTime * 0.75 + index * 1.8) * 0.08 * reveal;
+        cube.rotation.x = 0.08 + Math.sin(floatTime * 0.46) * 0.018 + pointer.y * 0.05;
+        cube.rotation.y = -0.18 + Math.sin(floatTime * 0.36) * 0.022 + pointer.x * 0.06;
+        cube.rotation.z = (index - 1) * 0.045;
+        cube.position.y += Math.sin(floatTime * 0.58) * 0.035 * reveal;
       });
-
-      const orbTarget = isMobile ? new THREE.Vector3(1.18, -1.34, 1.55) : new THREE.Vector3(4.02, 0.28, 1.52);
-      orb.position.lerpVectors(origin, orbTarget, reveal);
-      orb.position.y += Math.sin(floatTime * 0.9) * 0.08 * reveal;
-      orb.scale.setScalar(reveal * (isMobile ? 0.62 : 1));
 
       const cameraStart = isMobile ? new THREE.Vector3(4.2, 0.28, 3.45) : new THREE.Vector3(5.7, 0.42, 4.35);
       const cameraTunnel = isMobile ? new THREE.Vector3(0.7, -0.08, 0.9) : new THREE.Vector3(0.92, 0.02, 1.02);
@@ -443,13 +475,13 @@ export default function CinematicScene() {
       camera.position.copy(introCamera.lerp(cameraFinal, reframe));
       const introLook = new THREE.Vector3(0, -0.34, -0.96);
       const tunnelLook = new THREE.Vector3(-0.08, -0.12, -1.24);
-      const finalLook = new THREE.Vector3(isMobile ? 0 : 0.72, isMobile ? -0.12 : 0.34, 0);
+      const finalLook = new THREE.Vector3(isMobile ? 0 : 0.82, isMobile ? -0.12 : 0.3, 0);
       const currentLook = introLook.lerp(tunnelLook, cameraPush).lerp(finalLook, reframe);
       camera.lookAt(currentLook);
       camera.fov = THREE.MathUtils.lerp(isMobile ? 43 : 34, isMobile ? 52 : 39, reframe);
       camera.updateProjectionMatrix();
       ribbons.forEach((ribbon, index) => {
-        (ribbon.material as THREE.MeshBasicMaterial).opacity = reveal * (0.3 - index * 0.055);
+        (ribbon.material as THREE.MeshBasicMaterial).opacity = reveal * (0.18 - index * 0.035);
       });
       (particles.material as THREE.PointsMaterial).opacity = 0.035 + reveal * 0.46;
       particles.rotation.y = time * 0.018;
