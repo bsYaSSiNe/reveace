@@ -130,49 +130,165 @@ function makeScreenTexture(renderer: THREE.WebGLRenderer) {
   const context = canvas.getContext("2d");
   if (!context) return null;
 
-  const background = context.createRadialGradient(890, 280, 0, 890, 280, 700);
-  background.addColorStop(0, "#172400");
-  background.addColorStop(0.42, "#080b05");
-  background.addColorStop(1, "#010202");
+  const roundRect = (x: number, y: number, width: number, height: number, radius: number) => {
+    const r = Math.min(radius, width / 2, height / 2);
+    context.beginPath();
+    context.moveTo(x + r, y);
+    context.arcTo(x + width, y, x + width, y + height, r);
+    context.arcTo(x + width, y + height, x, y + height, r);
+    context.arcTo(x, y + height, x, y, r);
+    context.arcTo(x, y, x + width, y, r);
+    context.closePath();
+  };
+
+  const background = context.createRadialGradient(965, 250, 0, 965, 250, 760);
+  background.addColorStop(0, "#1b2a05");
+  background.addColorStop(0.34, "#0a0f05");
+  background.addColorStop(1, "#020303");
   context.fillStyle = background;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  context.lineCap = "round";
-  for (let index = 0; index < 4; index += 1) {
-    context.beginPath();
-    context.strokeStyle = `rgba(200,255,25,${0.5 - index * 0.09})`;
-    context.lineWidth = index === 0 ? 5 : 2;
-    context.shadowColor = "#c8ff19";
-    context.shadowBlur = 18;
-    context.moveTo(520, 650 + index * 18);
-    context.bezierCurveTo(730, 490 - index * 20, 870, 565 + index * 10, 1300, 300 - index * 35);
-    context.stroke();
-  }
-  context.shadowBlur = 0;
+  const horizon = context.createLinearGradient(0, 0, 1280, 760);
+  horizon.addColorStop(0, "rgba(200,255,25,.08)");
+  horizon.addColorStop(0.5, "rgba(200,255,25,0)");
+  horizon.addColorStop(1, "rgba(142,92,255,.09)");
+  context.fillStyle = horizon;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  roundRect(42, 32, 1196, 64, 18);
+  context.fillStyle = "rgba(255,255,255,.045)";
+  context.fill();
+  context.strokeStyle = "rgba(255,255,255,.12)";
+  context.lineWidth = 1;
+  context.stroke();
+
+  context.fillStyle = "#f6f7f3";
+  context.font = "900 27px Arial, sans-serif";
+  context.letterSpacing = "-1px";
+  context.fillText("REVEACE", 70, 74);
+  context.fillStyle = "#c8ff19";
+  context.fillText(".", 193, 74);
+  context.fillStyle = "rgba(255,255,255,.55)";
+  context.font = "700 13px Arial, sans-serif";
+  context.letterSpacing = "2px";
+  context.fillText("SHOP", 710, 72);
+  context.fillText("TOOLS", 792, 72);
+  context.fillText("JOURNAL", 880, 72);
+  roundRect(1015, 47, 198, 35, 18);
+  context.fillStyle = "rgba(200,255,25,.12)";
+  context.fill();
+  context.strokeStyle = "rgba(200,255,25,.42)";
+  context.stroke();
+  context.fillStyle = "#dfff7b";
+  context.font = "800 11px Arial, sans-serif";
+  context.letterSpacing = "1.5px";
+  context.fillText("DAVINCI RESOLVE", 1040, 69);
 
   context.fillStyle = "#c8ff19";
-  context.font = "900 108px Arial, sans-serif";
-  context.letterSpacing = "-5px";
-  context.fillText("REVEACE", 76, 194);
-  context.fillStyle = "#ffffff";
-  context.font = "700 39px Arial, sans-serif";
-  context.letterSpacing = "-1px";
-  context.fillText("MOTION TOOLS", 82, 257);
-  context.fillText("WITHOUT THE FRICTION.", 82, 304);
-  context.fillStyle = "rgba(255,255,255,.5)";
-  context.font = "500 15px Arial, sans-serif";
+  context.font = "800 13px Arial, sans-serif";
   context.letterSpacing = "3px";
-  context.fillText("FUSION / CURVES / CREATIVE FLOW", 84, 360);
+  context.fillText("REVEACE / CREATOR STORE", 64, 156);
+  context.fillStyle = "#ffffff";
+  context.font = "900 76px Arial, sans-serif";
+  context.letterSpacing = "-4px";
+  context.fillText("THE DAVINCI", 60, 235);
+  context.fillText("MOTION SHOP.", 60, 307);
+  context.fillStyle = "rgba(255,255,255,.56)";
+  context.font = "500 18px Arial, sans-serif";
+  context.letterSpacing = "0px";
+  context.fillText("High-end Fusion tools for creators who refuse friction.", 64, 350);
+  roundRect(64, 383, 236, 48, 24);
+  context.fillStyle = "#c8ff19";
+  context.fill();
+  context.fillStyle = "#071000";
+  context.font = "900 13px Arial, sans-serif";
+  context.letterSpacing = ".5px";
+  context.fillText("VIEW THE COLLECTION  →", 84, 413);
 
-  context.strokeStyle = "rgba(200,255,25,.45)";
-  context.lineWidth = 2;
-  context.beginPath();
-  context.arc(1025, 175, 78, 0, Math.PI * 2);
+  roundRect(755, 126, 468, 304, 28);
+  context.fillStyle = "rgba(6,9,5,.7)";
+  context.fill();
+  context.strokeStyle = "rgba(210,255,107,.3)";
+  context.lineWidth = 1.5;
   context.stroke();
+  const cardGlow = context.createRadialGradient(1020, 250, 0, 1020, 250, 235);
+  cardGlow.addColorStop(0, "rgba(200,255,25,.15)");
+  cardGlow.addColorStop(1, "rgba(200,255,25,0)");
+  context.fillStyle = cardGlow;
+  context.fill();
+  context.fillStyle = "rgba(255,255,255,.45)";
+  context.font = "800 11px Arial, sans-serif";
+  context.letterSpacing = "2.4px";
+  context.fillText("FEATURED TOOL / 01", 786, 160);
+  context.strokeStyle = "#c8ff19";
+  context.shadowColor = "#c8ff19";
+  context.shadowBlur = 16;
+  context.lineWidth = 7;
+  context.lineCap = "round";
   context.beginPath();
-  context.moveTo(955, 200);
-  context.bezierCurveTo(995, 225, 1010, 120, 1090, 145);
+  context.moveTo(810, 292);
+  context.bezierCurveTo(865, 320, 905, 195, 1008, 222);
   context.stroke();
+  [810, 905, 1008].forEach((x, index) => {
+    context.beginPath();
+    context.fillStyle = "#c8ff19";
+    context.arc(x, index === 0 ? 292 : index === 1 ? 253 : 222, 9, 0, Math.PI * 2);
+    context.fill();
+  });
+  context.shadowBlur = 0;
+  context.fillStyle = "#fff";
+  context.font = "900 36px Arial, sans-serif";
+  context.letterSpacing = "-1px";
+  context.fillText("SPLINE PRO", 786, 373);
+  context.fillStyle = "rgba(255,255,255,.42)";
+  context.font = "700 12px Arial, sans-serif";
+  context.letterSpacing = "2px";
+  context.fillText("CURVE SYSTEM / COMING SOON", 788, 400);
+
+  const cards = [
+    { x: 42, number: "01", name: "SPLINE PRO", type: "CURVES", accent: "#c8ff19" },
+    { x: 447, number: "02", name: "TAPER LINES", type: "STROKES", accent: "#b7f50f" },
+    { x: 852, number: "03", name: "FLOW DECK", type: "MOTION", accent: "#a98aff" },
+  ];
+  cards.forEach((card, index) => {
+    roundRect(card.x, 486, 386, 218, 24);
+    context.fillStyle = index === 2 ? "rgba(18,13,31,.62)" : "rgba(255,255,255,.035)";
+    context.fill();
+    context.strokeStyle = index === 2 ? "rgba(169,138,255,.3)" : "rgba(255,255,255,.12)";
+    context.stroke();
+    context.fillStyle = "rgba(255,255,255,.38)";
+    context.font = "800 11px Arial, sans-serif";
+    context.letterSpacing = "2px";
+    context.fillText(`${card.number} / ${card.type}`, card.x + 24, 520);
+    context.fillStyle = card.accent;
+    context.font = "900 28px Arial, sans-serif";
+    context.letterSpacing = "-1px";
+    context.fillText(card.name, card.x + 24, 666);
+    context.strokeStyle = card.accent;
+    context.fillStyle = card.accent;
+    context.shadowColor = card.accent;
+    context.shadowBlur = 11;
+    if (index === 0) {
+      context.lineWidth = 4;
+      context.beginPath();
+      context.moveTo(card.x + 40, 605);
+      context.bezierCurveTo(card.x + 104, 628, card.x + 128, 548, card.x + 220, 568);
+      context.stroke();
+    } else if (index === 1) {
+      [0, 1, 2, 3].forEach((line) => {
+        context.fillRect(card.x + 42, 555 + line * 20, 180 - line * 18, 5);
+        context.beginPath();
+        context.arc(card.x + 95 + line * 28, 557.5 + line * 20, 8, 0, Math.PI * 2);
+        context.fill();
+      });
+    } else {
+      [34, 58, 88, 112, 82, 54, 30].forEach((height, bar) => {
+        roundRect(card.x + 44 + bar * 28, 580 - height / 2, 11, height, 5);
+        context.fill();
+      });
+    }
+    context.shadowBlur = 0;
+  });
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -210,6 +326,12 @@ export default function CinematicScene() {
 
     const hemisphere = new THREE.HemisphereLight(0xf1f5e9, 0x010202, 0.68);
     scene.add(hemisphere);
+    const introKeyColor = new THREE.Color(0xffffff);
+    const finalKeyColor = new THREE.Color(0xf4ffe0);
+    const introRimColor = new THREE.Color(0xaec7ff);
+    const finalRimColor = new THREE.Color(0xc8ff19);
+    const introFogColor = new THREE.Color(0x000000);
+    const finalFogColor = new THREE.Color(0x020303);
     const key = new THREE.DirectionalLight(0xffffff, 4.6);
     key.position.set(-4.5, 7.5, 5.2);
     key.castShadow = true;
@@ -321,6 +443,14 @@ export default function CinematicScene() {
       hinge.position.set(x, -0.43, -1.88);
       laptop.add(hinge);
     });
+    const hingeGlowMaterial = new THREE.MeshBasicMaterial({ color: 0xc8ff19, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+    const hingeGlow = new THREE.Mesh(new RoundedBoxGeometry(4.55, 0.035, 0.065, 6, 0.02), hingeGlowMaterial);
+    hingeGlow.position.set(0, -0.405, -1.84);
+    hingeGlow.scale.x = 0.12;
+    laptop.add(hingeGlow);
+    const hingeLight = new THREE.PointLight(0xc8ff19, 0, 7, 2);
+    hingeLight.position.set(0, -0.22, -1.72);
+    laptop.add(hingeLight);
 
     const lid = new THREE.Group();
     lid.position.set(0, -0.44, -1.92);
@@ -422,6 +552,7 @@ export default function CinematicScene() {
       const reframe = easeInOut((time - 1.6) / 1.62);
       const opening = easeInOut((time - 1.54) / 1.72);
       const reveal = easeOut((time - 2.86) / 1.18);
+      const lightBlend = easeInOut((time - 1.24) / 1.82);
       const floatTime = Math.max(0, time - 3.9);
 
       if (!portalTriggered && time > 1.28) {
@@ -445,12 +576,21 @@ export default function CinematicScene() {
       laptop.rotation.x = THREE.MathUtils.lerp(-0.84, 0, reframe) + pointer.y * -0.014 * reframe;
       lid.rotation.x = THREE.MathUtils.lerp(0.72, -0.14, opening);
       const power = easeOut((time - 1.62) / 0.82);
-      screenMaterial.opacity = 0.035 + power * 0.965;
-      screenGlow.material.opacity = Math.sin(portal * Math.PI) * 0.82 + power * 0.075;
+      const portalPulse = Math.sin(portal * Math.PI);
+      screenMaterial.opacity = 0.012 + power * 0.988;
+      screenGlow.material.opacity = portalPulse * 0.58 + power * 0.045;
+      (screenGlass.material as THREE.MeshBasicMaterial).opacity = 0.005 + power * 0.035;
+      hingeGlowMaterial.opacity = portalPulse * 0.82 + power * 0.012;
+      hingeGlow.scale.x = 0.12 + easeOut(portal) * 0.88;
+      hingeLight.intensity = portalPulse * 72 + power;
       key.intensity = THREE.MathUtils.lerp(7.2, 4.6, reframe);
       rim.intensity = THREE.MathUtils.lerp(6.8, 3.4, reframe);
       hemisphere.intensity = THREE.MathUtils.lerp(0.28, 0.68, reframe);
-      limeLight.intensity = Math.sin(portal * Math.PI) * 122 + power * 28;
+      key.color.lerpColors(introKeyColor, finalKeyColor, lightBlend);
+      rim.color.lerpColors(introRimColor, finalRimColor, lightBlend);
+      scene.fog?.color.lerpColors(introFogColor, finalFogColor, lightBlend);
+      renderer.toneMappingExposure = 0.92 + portalPulse * 0.14 + lightBlend * 0.16;
+      limeLight.intensity = portalPulse * 94 + power * 18;
       purpleLight.intensity = reveal * 9;
       metal.color.lerpColors(introMetalColor, finalMetalColor, reframe);
       edgeMetal.color.lerpColors(introEdgeColor, finalEdgeColor, reframe);
